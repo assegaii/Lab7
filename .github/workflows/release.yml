@@ -1,0 +1,91 @@
+name: 'C++ CI'
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  Linux:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - run: sudo apt-get update && sudo apt-get install libboost-test-dev -y
+      - run: cmake . -DPATCH_VERSION=${{ github.run_number }}
+      - run: cmake --build .
+      - run: cmake --build . --target test
+      - run: cmake --build . --target package
+      - name: Upload Linux Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux-artifact
+          path: ./VectorGraphicEditor-1.0.${{ github.run_number }}-Linux.deb
+  Windows:
+    runs-on: windows-latest
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Install dependencies via vcpkg
+        uses: actions/cache@v3
+        with:
+          path: .vcpkg/installed
+          key: ${{ runner.os }}-vcpkg-boost-${{ hashFiles('**/vcpkg.json')}}
+      - run: git clone https://github.com/microsoft/vcpkg.git
+      - run: ./vcpkg/bootstrap-vcpkg.bat
+        
+      - run: cmake . -DPATCH_VERSION=${{ github.run_number }} -D CMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake -D CMAKE_CXX_COMPILER=g++
+      - run: cmake --build .
+      - run: cmake --build . --target package
+      - name: Upload Windows Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-artifact
+          path: ./VectorGraphicEditor-1.0.${{ github.run_number }}-win64.zip
+  Release:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    needs: [Linux, Windows]
+    steps:
+      - name: Download Linux Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: linux-artifact
+          path: ./
+      - name: Download Windows Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: windows-artifact
+          path: ./
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.run_number }}
+          release_name: v1.0.${{ github.run_number }}
+          draft: false
+          prerelease: false
+      - name: Upload Linux Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./VectorGraphicEditor-1.0.${{ github.run_number }}-Linux.deb
+          asset_name: VectorGraphicEditor-1.0.${{ github.run_number }}-Linux.deb
+          asset_content_type: application/vnd.debian.binary-package
+      - name: Upload Windows Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./VectorGraphicEditor-1.0.${{ github.run_number }}-win64.zip
+          asset_name: VectorGraphicEditor-1.0.${{ github.run_number }}-Windows.zip
+          asset_content_type: application/vnd.microsoft.portable-executable
