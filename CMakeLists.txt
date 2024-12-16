@@ -13,8 +13,8 @@ project(DuplicatesFinder VERSION ${PROJECT_VERSION})
 
 # Указываем путь к Boost в папке external
 set(BOOST_ROOT "${CMAKE_SOURCE_DIR}/external/boost")
-set(BOOST_INCLUDEDIR "${BOOST_ROOT}/include")
-set(BOOST_LIBRARYDIR "${BOOST_ROOT}/lib")
+# Для поиска компонент Boost используем CMAKE_PREFIX_PATH
+set(CMAKE_PREFIX_PATH "${BOOST_ROOT}")
 
 # Ищем компоненты Boost, включая program_options, filesystem и crc
 find_package(Boost REQUIRED COMPONENTS filesystem program_options crc)
@@ -33,10 +33,8 @@ target_link_libraries(DuplicatesFinder Boost::boost Boost::program_options Boost
 install(TARGETS DuplicatesFinder DESTINATION bin)
 include(CPack)
 
-
 # Настройки для MSVC
 if(MSVC)
-    
     target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
     set_target_properties(DuplicatesFinder PROPERTIES 
         OUTPUT_NAME "DuplicatesFinder-${PROJECT_VERSION}-Windows"
@@ -61,4 +59,3 @@ include(CTest)
 # Настройки для пакета
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-
