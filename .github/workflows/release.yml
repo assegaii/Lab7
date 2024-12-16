@@ -22,7 +22,8 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: linux-artifact
-          path: ./VectorGraphicEditor-1.0.${{ github.run_number }}-Linux.deb
+          path: ./DuplicatesFinder-1.0.${{ github.run_number }}-Linux.deb
+
   Windows:
     runs-on: windows-latest
     permissions: write-all
@@ -34,10 +35,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .vcpkg/installed
-          key: ${{ runner.os }}-vcpkg-boost-${{ hashFiles('**/vcpkg.json')}}
+          key: ${{ runner.os }}-vcpkg-boost-${{ hashFiles('**/vcpkg.json') }}
       - run: git clone https://github.com/microsoft/vcpkg.git
       - run: ./vcpkg/bootstrap-vcpkg.bat
-        
       - run: cmake . -DPATCH_VERSION=${{ github.run_number }} -D CMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake -D CMAKE_CXX_COMPILER=g++
       - run: cmake --build .
       - run: cmake --build . --target package
@@ -45,7 +45,33 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: windows-artifact
-          path: ./VectorGraphicEditor-1.0.${{ github.run_number }}-win64.zip
+          path: ./DuplicatesFinder-1.0.${{ github.run_number }}-win64.zip
+
+
+      - name: Generate SHA256 hash for the executable
+        run: |
+          $file = "./DuplicatesFinder-1.0.${{ github.run_number }}-win64.zip"
+          $hash = Get-FileHash $file -Algorithm SHA256
+          $hash.Hash | Out-File hash.txt
+        shell: pwsh
+
+      - name: Generate Winget Manifest
+        run: |
+          echo "Generating Winget Manifest..."
+          SHA256_HASH=$(cat hash.txt)
+          echo "
+          id: assegaii.bayan
+          version: 1.0.${{ github.run_number }}
+          name: Bayan
+          description: Программа для поиска дубликатов файлов
+          homepage: https://github.com/assegaii/Lab7
+          license: MIT
+          install:
+            - url: https://github.com/assegaii/Lab7/releases/download/v1.0.${{ github.run_number }}/DuplicatesFinder-1.0.${{ github.run_number }}-win64.zip
+              sha256: $SHA256_HASH" > winget-manifest.yaml
+        shell: bash
+
+
   Release:
     runs-on: ubuntu-latest
     permissions: write-all
@@ -55,12 +81,12 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: linux-artifact
-          path: ./
+          path: ./ 
       - name: Download Windows Artifact
         uses: actions/download-artifact@v3
         with:
           name: windows-artifact
-          path: ./
+          path: ./ 
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -77,8 +103,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./VectorGraphicEditor-1.0.${{ github.run_number }}-Linux.deb
-          asset_name: VectorGraphicEditor-1.0.${{ github.run_number }}-Linux.deb
+          asset_path: ./DuplicatesFinder-1.0.${{ github.run_number }}-Linux.deb
+          asset_name: DuplicatesFinder-1.0.${{ github.run_number }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package
       - name: Upload Windows Asset
         uses: actions/upload-release-asset@v1
@@ -86,6 +112,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./VectorGraphicEditor-1.0.${{ github.run_number }}-win64.zip
-          asset_name: VectorGraphicEditor-1.0.${{ github.run_number }}-Windows.zip
+          asset_path: ./DuplicatesFinder-1.0.${{ github.run_number }}-win64.zip
+          asset_name: DuplicatesFinder-1.0.${{ github.run_number }}-Windows.zip
           asset_content_type: application/vnd.microsoft.portable-executable
+
+      - name: Upload Winget Manifest to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./winget-manifest.yaml
+          asset_name: winget-manifest.yaml
+          asset_content_type: application/yaml
