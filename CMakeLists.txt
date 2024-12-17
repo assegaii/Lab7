@@ -18,14 +18,15 @@ set(CMAKE_CXX_FLAGS_RELEASE "-std=gnu++17")
 # Включение папки include
 include_directories(include)
 
+set(CMAKE_TOOLCHAIN_FILE "${CMAKE_BINARY_DIR}/external/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+
 # Обработка разных платформ
 if(WIN32)
     # Для Windows используем vcpkg
-    find_package(Boost REQUIRED COMPONENTS filesystem program_options crc)
-    
+    find_package(Boost CONFIG REQUIRED COMPONENTS filesystem program_options crc)
 elseif(UNIX)
     # Для Linux используем системные библиотеки Boost
-    find_package(Boost REQUIRED COMPONENTS filesystem program_options crc)
+    find_package(Boost CONFIG REQUIRED COMPONENTS filesystem program_options crc)
 endif()
 
 # Проверяем, что Boost найден
@@ -37,7 +38,7 @@ endif()
 add_executable(DuplicatesFinder main.cpp)
 
 # Линковка с библиотеками Boost
-target_link_libraries(DuplicatesFinder Boost::filesystem Boost::program_options Boost::crc)
+target_link_libraries(DuplicatesFinder PRIVATE Boost::filesystem Boost::program_options Boost::crc)
 
 # Установка файла
 install(TARGETS DuplicatesFinder DESTINATION bin)
