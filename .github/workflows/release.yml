@@ -49,38 +49,15 @@ jobs:
       - name: Install Boost dependencies via vcpkg
         run: .\vcpkg\vcpkg install boost-filesystem boost-program-options boost-crc boost-algorithm
       - name: Configure CMake
-        run: cmake . -DPATCH_VERSION=${{ github.run_number }} -DCMAKE_TOOLCHAIN_FILE=.\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_CXX_COMPILER=g++
-      - run: cmake --build .
+        run: cmake . -DPATCH_VERSION=${{ github.run_number }} -DCMAKE_TOOLCHAIN_FILE=.\vcpkg\scripts\buildsystems\vcpkg.cmake
+      - run: cmake --build . 
       - run: cmake --build . --target package
       - name: Upload Windows Artifact
         uses: actions/upload-artifact@v3
         with:
           name: windows-artifact
           path: ./DuplicatesFinder-1.0.${{ github.run_number }}-win64.zip
-      - name: Generate SHA256 hash for the executable
-        run: |
-          if (Test-Path ./DuplicatesFinder-1.0.${{ github.run_number }}-win64.zip) {
-            $hash = Get-FileHash ./DuplicatesFinder-1.0.${{ github.run_number }}-win64.zip -Algorithm SHA256
-            $hash.Hash | Out-File hash.txt
-          } else {
-            Write-Error "Executable not found!"
-          }
-        shell: pwsh
-      - name: Generate Winget Manifest
-        run: |
-          echo "Generating Winget Manifest..."
-          SHA256_HASH=$(cat hash.txt)
-          echo "
-          id: assegaii.bayan
-          version: 1.0.${{ github.run_number }}
-          name: Bayan
-          description: Программа для поиска дубликатов файлов
-          homepage: https://github.com/assegaii/Lab7
-          license: MIT
-          install:
-            - url: https://github.com/assegaii/Lab7/releases/download/v1.0.${{ github.run_number }}/DuplicatesFinder-1.0.${{ github.run_number }}-win64.zip
-              sha256: $SHA256_HASH" > winget-manifest.yaml
-        shell: bash
+
 
   Release:
     runs-on: ubuntu-latest
@@ -125,12 +102,40 @@ jobs:
           asset_path: ./DuplicatesFinder-1.0.${{ github.run_number }}-win64.zip
           asset_name: DuplicatesFinder-1.0.${{ github.run_number }}-Windows.zip
           asset_content_type: application/vnd.microsoft.portable-executable
-      - name: Upload Winget Manifest to Release
-        uses: actions/upload-release-asset@v1
+      - name: Calculate SHA256 for Windows
+        id: sha256_windows
+        run: |
+          sha256sum ./DuplicatesFinder-1.0.${{ github.run_number }}-win64.zip | awk '{ print $1 }' > sha256_windows.txt
+          echo "sha256=$(cat sha256_windows.txt)" >> $GITHUB_ENV
+      - name: Create WinGet Manifest
+        run: |
+          mkdir -p winget-manifest
+          cat <<EOF > winget-manifest/DuplicatesFinder.yaml
+          PackageIdentifier: "assegaii.DuplicatesFinder"
+          PackageVersion: "1.0.${{ github.run_number }}"
+          Publisher: "assegai"
+          Name: "DuplicatesFinder"
+          Description: "Tool to find duplicate files."
+          License: "MIT"
+          LicenseUrl: "https://github.com/assegaii/Lab7/LICENSE"
+          Homepage: "https://github.com/assegaii/Lab7"
+          Installers:
+            - Architecture: "x64"
+              InstallerType: "zip"
+              InstallerUrl: "https://github.com/${{ github.repository }}/releases/download/v${{ github.run_number }}/DuplicatesFinder-1.0.${{ github.run_number }}-win64.zip"
+              InstallerSha256: "${{ env.sha256 }}"
+          EOF
+      - name: Commit and Push Manifest to winget-pkgs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./winget-manifest.yaml
-          asset_name: winget-manifest.yaml
-          asset_content_type: application/yaml
+        run: |
+          git clone https://github.com/microsoft/winget-pkgs.git
+          cp winget-manifest/DuplicatesFinder.yaml winget-pkgs/manifests/d/DuplicatesFinder/DuplicatesFinder.yaml
+          cd winget-pkgs
+          git config user.name "assegaii"
+          git config user.email "dmitryanons@gmail.com"
+          git checkout -b add-duplicatesfinder-${{ github.run_number }}
+          git add .
+          git commit -m "Add manifest for DuplicatesFinder 1.0.${{ github.run_number }}"
+          git push origin add-duplicatesfinder-${{ github.run_number }}
+          gh pr create --repo microsoft/winget-pkgs --title "Add DuplicatesFinder 1.0.${{ github.run_number }}" --body "Automatically generated manifest for DuplicatesFinder."
