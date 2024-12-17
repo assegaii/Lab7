@@ -6,14 +6,14 @@ set(PROJECT_VERSION 1.0.${PATCH_VERSION})
 project(DuplicatesFinder VERSION ${PROJECT_VERSION})
 
 # Устанавливаем стандарт C++
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Для Debug:
-set(CMAKE_CXX_FLAGS_DEBUG "-std=gnu++17")
+set(CMAKE_CXX_FLAGS_DEBUG "-std=gnu++14")
 
 # Для Release:
-set(CMAKE_CXX_FLAGS_RELEASE "-std=gnu++17")
+set(CMAKE_CXX_FLAGS_RELEASE "-std=gnu++14")
 
 # Включение папки include
 include_directories(include)
@@ -23,7 +23,7 @@ find_package(Boost COMPONENTS filesystem program_options REQUIRED)
 
 # Создание исполняемого файла
 add_executable(DuplicatesFinder main.cpp)
-target_include_directories(DuplicatesFinder PRIVATE ${Boost_INCLUDE_DIRS})
+target_include_directories(DuplicatesFinder PRIVATE ${CMAKE_BINARY_DIR})
 # Линковка с библиотеками Boost
 target_link_libraries(DuplicatesFinder PRIVATE Boost::filesystem Boost::program_options)
 
@@ -45,9 +45,11 @@ set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
 set(CPACK_PACKAGE_CONTACT "dmitryanons@gmail.com")
 
 if(WIN32)
-    set_target_properties(DuplicatesFinder PROPERTIES 
-        OUTPUT_NAME "DuplicatesFinder-${PROJECT_VERSION}-Windows"
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+    set_target_properties(DuplicatesFinder PROPERTIES  
+        OUTPUT_NAME "DuplicatesFinder-${PROJECT_VERSION}-Windows" 
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}" 
+        COMPILE_DEFINITIONS BOOST_TEST_DYN_LINK 
+        INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIR})
     set(CPACK_GENERATOR ZIP)
 elseif(UNIX)
     set(CPACK_GENERATOR DEB)
