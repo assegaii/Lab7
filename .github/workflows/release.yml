@@ -47,7 +47,7 @@ jobs:
       - name: Bootstrap vcpkg
         run: .\vcpkg\bootstrap-vcpkg.bat
       - name: Install Boost dependencies via vcpkg
-        run: .\vcpkg\vcpkg install boost-filesystem boost-program-options boost-crc
+        run: .\vcpkg\vcpkg install boost-filesystem boost-program-options boost-crc boost-algorithm
       - name: Configure CMake
         run: cmake . -DPATCH_VERSION=${{ github.run_number }} -DCMAKE_TOOLCHAIN_FILE=.\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_CXX_COMPILER=g++
       - run: cmake --build .
