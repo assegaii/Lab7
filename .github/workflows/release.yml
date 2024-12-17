@@ -12,12 +12,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          submodules: recursive
-      - name: Install dependencies via VCPKG
-        run: ./external/vcpkg/vcpkg install boost-filesystem boost-program-options boost-crc
-      - run: cmake . -DPATCH_VERSION=${{ github.run_number }} -DCMAKE_TOOLCHAIN_FILE=./external/vcpkg/scripts/buildsystems/vcpkg.cmake
+          submodules: true
+      - run: |
+          sudo apt-get update && sudo apt-get install -y \
+          libboost-filesystem-dev \
+          libboost-program-options-dev \
+          libboost-crc-dev
+      - run: cmake . -DPATCH_VERSION=${{ github.run_number }}
       - run: cmake --build .
-      - run: ctest --output-on-failure
+      - run: cmake --build . --target test
       - run: cmake --build . --target package
       - name: Upload Linux Artifact
         uses: actions/upload-artifact@v3
@@ -31,12 +34,23 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          submodules: recursive
-      - name: Install dependencies via VCPKG
-        run: ./external/vcpkg/vcpkg.exe install boost-filesystem boost-program-options boost-crc
-      - run: cmake . -DPATCH_VERSION=${{ github.run_number }} -DCMAKE_TOOLCHAIN_FILE=./external/vcpkg/scripts/buildsystems/vcpkg.cmake -DBoost_DIR=./external/vcpkg/installed/x64-windows/share/boost
+          submodules: true
+      - name: Cache vcpkg
+        uses: actions/cache@v3
+        with:
+          path: .vcpkg/installed
+          key: ${{ runner.os }}-vcpkg-boost-${{ hashFiles('**/vcpkg.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vcpkg-
+      - name: Clone vcpkg
+        run: git clone https://github.com/microsoft/vcpkg.git
+      - name: Bootstrap vcpkg
+        run: .\vcpkg\bootstrap-vcpkg.bat
+      - name: Install Boost dependencies via vcpkg
+        run: .\vcpkg\vcpkg install boost-filesystem boost-program-options boost-crc
+      - name: Configure CMake
+        run: cmake . -DPATCH_VERSION=${{ github.run_number }} -DCMAKE_TOOLCHAIN_FILE=.\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_CXX_COMPILER=g++
       - run: cmake --build .
-      - run: ctest --output-on-failure
       - run: cmake --build . --target package
       - name: Upload Windows Artifact
         uses: actions/upload-artifact@v3
