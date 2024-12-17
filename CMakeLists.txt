@@ -1,61 +1,68 @@
 cmake_minimum_required(VERSION 3.16)
 
-set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
+set(PATCH_VERSION "3" CACHE INTERNAL "Patch version")
 set(PROJECT_VERSION 1.0.${PATCH_VERSION})
-
-# Для Debug:
-set(CMAKE_CXX_FLAGS_DEBUG "-static-libgcc -static-libstdc++ -std=gnu++17")
-
-# Для Release:
-set(CMAKE_CXX_FLAGS_RELEASE "-static-libgcc -static-libstdc++ -std=gnu++17")
 
 project(DuplicatesFinder VERSION ${PROJECT_VERSION})
 
-# Указываем путь к Boost в папке external
-set(BOOST_ROOT "${CMAKE_SOURCE_DIR}/external/boost")
-# Для поиска компонент Boost используем CMAKE_PREFIX_PATH
-set(CMAKE_PREFIX_PATH "${BOOST_ROOT}")
-
-# Ищем компоненты Boost, включая program_options, filesystem и crc
-find_package(Boost REQUIRED COMPONENTS filesystem program_options crc)
-
+# Устанавливаем стандарт C++
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Для Debug:
+set(CMAKE_CXX_FLAGS_DEBUG "-std=gnu++17")
+
+# Для Release:
+set(CMAKE_CXX_FLAGS_RELEASE "-std=gnu++17")
+
+# Включение папки include
 include_directories(include)
+
+# Обработка разных платформ
+if(WIN32)
+    # Для Windows используем vcpkg
+    find_package(Boost REQUIRED COMPONENTS filesystem program_options crc)
+    
+elseif(UNIX)
+    # Для Linux используем системные библиотеки Boost
+    find_package(Boost REQUIRED COMPONENTS filesystem program_options crc)
+endif()
+
+# Проверяем, что Boost найден
+if(NOT Boost_FOUND)
+    message(FATAL_ERROR "Boost libraries not found!")
+endif()
 
 # Создание исполняемого файла
 add_executable(DuplicatesFinder main.cpp)
 
 # Линковка с библиотеками Boost
-target_link_libraries(DuplicatesFinder Boost::boost Boost::program_options Boost::filesystem Boost::crc)
+target_link_libraries(DuplicatesFinder Boost::filesystem Boost::program_options Boost::crc)
 
+# Установка файла
 install(TARGETS DuplicatesFinder DESTINATION bin)
-include(CPack)
-
-# Настройки для MSVC
-if(MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
-    set_target_properties(DuplicatesFinder PROPERTIES 
-        OUTPUT_NAME "DuplicatesFinder-${PROJECT_VERSION}-Windows"
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
-    set(CPACK_GENERATOR ZIP)
-
-# Настройки для UNIX
-elseif(UNIX)
-    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror)
-    set(CPACK_GENERATOR DEB)
-endif()
-
-set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
-set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
-set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
-
-set(CPACK_PACKAGE_CONTACT dmitryanons@gmail.com)
 
 # Включаем тестирование
 include(CTest)
 
-# Настройки для пакета
-set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
+target_compile_options(DuplicatesFinder PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>
+    $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra>
+)
+
+# Настройки CPack для генерации пакетов
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+set(CPACK_PACKAGE_CONTACT "dmitryanons@gmail.com")
+
+if(WIN32)
+    set_target_properties(DuplicatesFinder PROPERTIES 
+        OUTPUT_NAME "DuplicatesFinder-${PROJECT_VERSION}-Windows"
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+    set(CPACK_GENERATOR ZIP)
+elseif(UNIX)
+    set(CPACK_GENERATOR DEB)
+endif()
+
+include(CPack)

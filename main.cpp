@@ -1,15 +1,16 @@
 #include <boost/filesystem.hpp>
-#include <boost/crc.hpp>
-#include <boost/algorithm/string/join.hpp>
+#include <boost/program_options.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/crc.hpp> 
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <unordered_map>
 #include <string>
 #include <algorithm>
-#include <sstream>  // Подключаем заголовочный файл для stringstream
 
 namespace fs = boost::filesystem;
+namespace po = boost::program_options;
 
 // Функция для вычисления CRC32 хеша
 std::string compute_crc32(const std::string &data) {
@@ -32,6 +33,8 @@ void process_files(const std::vector<fs::path>& directories,
         if (!fs::exists(dir) || !fs::is_directory(dir)) continue;
 
         for (fs::recursive_directory_iterator it(dir), end; it != end; ++it) {
+            if (scan_depth == 0 && it.depth() > 0) continue;  // Пропускаем файлы с глубиной больше 0
+
             if (fs::is_directory(it->path()) && std::find(exclude_dirs.begin(), exclude_dirs.end(), it->path()) != exclude_dirs.end())
                 continue;  // Пропускаем исключенные директории
 
@@ -70,68 +73,47 @@ void process_files(const std::vector<fs::path>& directories,
     }
 }
 
-int main() {
-    std::vector<std::string> directories;
-    std::vector<std::string> exclude_dirs;
-    unsigned int scan_depth;
-    size_t block_size;
-    size_t min_size;
+int main(int argc, char* argv[]) {
+    try {
+        po::options_description desc("Options");
+        desc.add_options()
+            ("help,h", "Produce help message")
+            ("directories,d", po::value<std::vector<fs::path>>()->multitoken(), "Directories to scan")
+            ("exclude,x", po::value<std::vector<fs::path>>()->multitoken(), "Directories to exclude from scanning")
+            ("depth,p", po::value<unsigned int>()->default_value(1), "Scan depth (0 - no subdirectories)")
+            ("block-size,s", po::value<size_t>()->default_value(512), "Block size for hashing")
+            ("min-size,m", po::value<size_t>()->default_value(1), "Minimum file size to consider (in bytes)")
+            ;
 
-    // Вводим директории для сканирования
-    std::cout << "Enter directories to scan (separate by space): ";
-    std::string dir_input;
-    std::getline(std::cin, dir_input);
-    std::istringstream dir_stream(dir_input);
-    std::string dir;
-    while (dir_stream >> dir) {
-        directories.push_back(dir);
+        po::variables_map vm;
+        po::store(po::parse_command_line(argc, argv, desc), vm);
+        po::notify(vm);
+
+        if (vm.count("help")) {
+            std::cout << desc << std::endl;
+            return 0;
+        }
+
+        if (!vm.count("directories")) {
+            std::cerr << "Error: No directories specified for scanning!" << std::endl;
+            return 1;
+        }
+
+        if (!vm.count("exclude")) {
+            std::cerr << "Error: No exclude directories specified!" << std::endl;
+            return 1;
+        }
+
+        std::vector<fs::path> directories = vm["directories"].as<std::vector<fs::path>>();
+        std::vector<fs::path> exclude_dirs = vm["exclude"].as<std::vector<fs::path>>();
+        unsigned int scan_depth = vm["depth"].as<unsigned int>();
+        size_t block_size = vm["block-size"].as<size_t>();
+        size_t min_size = vm["min-size"].as<size_t>();
+
+        process_files(directories, exclude_dirs, scan_depth, block_size, min_size);
     }
-
-    // Вводим исключенные директории
-    std::cout << "Enter directories to exclude (separate by space, press enter if none): ";
-    std::string exclude_input;
-    std::getline(std::cin, exclude_input);
-    std::istringstream exclude_stream(exclude_input);
-    while (exclude_stream >> dir) {
-        exclude_dirs.push_back(dir);
+    catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return 1;
     }
-
-    // Вводим глубину сканирования
-    std::cout << "Enter scan depth (0 for no subdirectories, default is 1): ";
-    std::string depth_input;
-    std::getline(std::cin, depth_input);
-    if (!depth_input.empty()) {
-        scan_depth = std::stoi(depth_input);
-    } else {
-        scan_depth = 1;  // Значение по умолчанию
-    }
-
-    // Вводим размер блока для хеширования
-    std::cout << "Enter block size for hashing (default is 512): ";
-    std::string block_size_input;
-    std::getline(std::cin, block_size_input);
-    if (!block_size_input.empty()) {
-        block_size = std::stoi(block_size_input);
-    } else {
-        block_size = 512;  // Значение по умолчанию
-    }
-
-    // Вводим минимальный размер файла
-    std::cout << "Enter minimum file size to consider (in bytes, default is 1): ";
-    std::string min_size_input;
-    std::getline(std::cin, min_size_input);
-    if (!min_size_input.empty()) {
-        min_size = std::stoi(min_size_input);
-    } else {
-        min_size = 1;  // Значение по умолчанию
-    }
-
-    // Преобразуем строки директорий в тип fs::path
-    std::vector<fs::path> dir_paths(directories.begin(), directories.end());
-    std::vector<fs::path> exclude_paths(exclude_dirs.begin(), exclude_dirs.end());
-
-    // Обрабатываем файлы
-    process_files(dir_paths, exclude_paths, scan_depth, block_size, min_size);
-
-    return 0;
 }
