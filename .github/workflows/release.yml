@@ -13,6 +13,8 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
+      - name: Install dependencies via VCPKG
+        run: .\externals\vcpkg\vcpkg.exe install boost-filesystem boost-program-options boost-crc
       - run: cmake . -DPATCH_VERSION=${{ github.run_number }} -DCMAKE_TOOLCHAIN_FILE=./external/vcpkg/scripts/buildsystems/vcpkg.cmake
       - run: cmake --build .
       - run: ctest --output-on-failure
@@ -30,7 +32,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
-      - run: cmake . -DPATCH_VERSION=${{ github.run_number }} -DCMAKE_TOOLCHAIN_FILE=./external/vcpkg/scripts/buildsystems/vcpkg.cmake
+      - run: cmake . -DPATCH_VERSION=${{ github.run_number }} -DCMAKE_TOOLCHAIN_FILE=./external/vcpkg/scripts/buildsystems/vcpkg.cmake -DBOOST_ROOT=./external/vcpkg/installed/x64-windows
       - run: cmake --build .
       - run: ctest --output-on-failure
       - run: cmake --build . --target package
