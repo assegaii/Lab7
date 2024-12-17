@@ -12,12 +12,6 @@ project(DuplicatesFinder VERSION ${PROJECT_VERSION})
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Для Debug:
-set(CMAKE_CXX_FLAGS_DEBUG "-std=gnu++14")
-
-# Для Release:
-set(CMAKE_CXX_FLAGS_RELEASE "-std=gnu++14")
-
 # Включение папки include
 include_directories(include)
 

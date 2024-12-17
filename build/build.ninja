@@ -52,7 +52,7 @@ build cmake_object_order_depends_target_DuplicatesFinder: phony || .
 build CMakeFiles/DuplicatesFinder.dir/main.cpp.obj: CXX_COMPILER__DuplicatesFinder_unscanned_Debug D$:/Study/C++/Labs/Lab7/main.cpp || cmake_object_order_depends_target_DuplicatesFinder
   DEFINES = -DBOOST_CONTAINER_DYN_LINK -DBOOST_CONTAINER_NO_LIB -DBOOST_FILESYSTEM_DYN_LINK=1 -DBOOST_FILESYSTEM_NO_LIB -DBOOST_PROGRAM_OPTIONS_DYN_LINK -DBOOST_PROGRAM_OPTIONS_NO_LIB -DBOOST_TEST_DYN_LINK
   DEP_FILE = CMakeFiles\DuplicatesFinder.dir\main.cpp.obj.d
-  FLAGS = -std=gnu++14 -std=gnu++14 -Wall -Wextra
+  FLAGS = -g -std=gnu++14 -Wall -Wextra
   OBJECT_DIR = CMakeFiles\DuplicatesFinder.dir
   OBJECT_FILE_DIR = CMakeFiles\DuplicatesFinder.dir
 
@@ -65,7 +65,7 @@ build CMakeFiles/DuplicatesFinder.dir/main.cpp.obj: CXX_COMPILER__DuplicatesFind
 # Link the executable DuplicatesFinder-1.0.3-Windows.exe
 
 build DuplicatesFinder-1.0.3-Windows.exe: CXX_EXECUTABLE_LINKER__DuplicatesFinder_Debug CMakeFiles/DuplicatesFinder.dir/main.cpp.obj | C$:/msys64/mingw64/lib/libboost_filesystem-mt.dll.a C$:/msys64/mingw64/lib/libboost_program_options-mt.dll.a C$:/msys64/mingw64/lib/libboost_container-mt.dll.a
-  FLAGS = -std=gnu++14
+  FLAGS = -g
   LINK_LIBRARIES = C:/msys64/mingw64/lib/libboost_filesystem-mt.dll.a  C:/msys64/mingw64/lib/libboost_program_options-mt.dll.a  C:/msys64/mingw64/lib/libboost_container-mt.dll.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\DuplicatesFinder.dir
   POST_BUILD = cd .
