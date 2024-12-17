@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.10)
 
 set(PATCH_VERSION "3" CACHE INTERNAL "Patch version")
 set(PROJECT_VERSION 1.0.${PATCH_VERSION})
@@ -18,14 +18,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-std=gnu++17")
 # Включение папки include
 include_directories(include)
 
-# Обработка разных платформ
-if(WIN32)
-    # Для Windows используем vcpkg
-    find_package(Boost CONFIG REQUIRED COMPONENTS filesystem program_options crc)
-elseif(UNIX)
-    # Для Linux используем системные библиотеки Boost
-    find_package(Boost CONFIG REQUIRED COMPONENTS filesystem program_options crc)
-endif()
+find_package(Boost COMPONENTS filesystem program_options crc REQUIRED)
 
 # Создание исполняемого файла
 add_executable(DuplicatesFinder main.cpp)
