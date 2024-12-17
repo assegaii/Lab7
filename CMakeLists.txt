@@ -21,6 +21,12 @@ set(CMAKE_CXX_FLAGS_RELEASE "-std=gnu++14")
 # Включение папки include
 include_directories(include)
 
+if(WIN32)
+    set(BOOST_ROOT "${CMAKE_SOURCE_DIR}/vcpkg/installed/x64-windows")
+    set(BOOST_INCLUDEDIR "${BOOST_ROOT}/include")
+    set(BOOST_LIBRARYDIR "${BOOST_ROOT}/lib")
+endif()
+
 find_package(Boost COMPONENTS filesystem program_options REQUIRED)
 
 
