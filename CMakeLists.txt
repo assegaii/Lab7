@@ -18,13 +18,13 @@ set(CMAKE_CXX_FLAGS_RELEASE "-std=gnu++17")
 # Включение папки include
 include_directories(include)
 
-find_package(Boost COMPONENTS filesystem program_options crc REQUIRED)
+find_package(Boost COMPONENTS filesystem program_options REQUIRED)
 
 # Создание исполняемого файла
 add_executable(DuplicatesFinder main.cpp)
 
 # Линковка с библиотеками Boost
-target_link_libraries(DuplicatesFinder PRIVATE Boost::filesystem Boost::program_options Boost::crc)
+target_link_libraries(DuplicatesFinder PRIVATE Boost::filesystem Boost::program_options)
 
 # Установка файла
 install(TARGETS DuplicatesFinder DESTINATION bin)
