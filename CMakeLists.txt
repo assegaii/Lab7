@@ -20,9 +20,10 @@ include_directories(include)
 
 find_package(Boost COMPONENTS filesystem program_options REQUIRED)
 
+
 # Создание исполняемого файла
 add_executable(DuplicatesFinder main.cpp)
-
+target_include_directories(DuplicatesFinder PRIVATE ${Boost_INCLUDE_DIRS})
 # Линковка с библиотеками Boost
 target_link_libraries(DuplicatesFinder PRIVATE Boost::filesystem Boost::program_options)
 
