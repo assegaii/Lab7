@@ -138,5 +138,6 @@ jobs:
           git checkout -b add-duplicatesfinder-${{ github.run_number }}
           git add .
           git commit -m "Add manifest for DuplicatesFinder 1.0.${{ github.run_number }}"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/microsoft/winget-pkgs.git
           git push origin add-duplicatesfinder-${{ github.run_number }}
           gh pr create --repo microsoft/winget-pkgs --title "Add DuplicatesFinder 1.0.${{ github.run_number }}" --body "Automatically generated manifest for DuplicatesFinder."
