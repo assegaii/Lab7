@@ -1,7 +1,7 @@
 [
 {
   "directory": "D:/Study/C++/Labs/Lab7/build",
-  "command": "C:\\msys64\\mingw64\\bin\\g++.exe -DBOOST_CONTAINER_DYN_LINK -DBOOST_CONTAINER_NO_LIB -DBOOST_FILESYSTEM_DYN_LINK=1 -DBOOST_FILESYSTEM_NO_LIB -DBOOST_PROGRAM_OPTIONS_DYN_LINK -DBOOST_PROGRAM_OPTIONS_NO_LIB -ID:/Study/C++/Labs/Lab7/include -std=gnu++17 -std=gnu++17 -Wall -Wextra -o CMakeFiles\\DuplicatesFinder.dir\\main.cpp.obj -c D:\\Study\\C++\\Labs\\Lab7\\main.cpp",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe -DBOOST_CONTAINER_DYN_LINK -DBOOST_CONTAINER_NO_LIB -DBOOST_FILESYSTEM_DYN_LINK=1 -DBOOST_FILESYSTEM_NO_LIB -DBOOST_PROGRAM_OPTIONS_DYN_LINK -DBOOST_PROGRAM_OPTIONS_NO_LIB -DBOOST_TEST_DYN_LINK -std=gnu++14 -std=gnu++14 -Wall -Wextra -o CMakeFiles\\DuplicatesFinder.dir\\main.cpp.obj -c D:\\Study\\C++\\Labs\\Lab7\\main.cpp",
   "file": "D:\\Study\\C++\\Labs\\Lab7\\main.cpp",
   "output": "CMakeFiles\\DuplicatesFinder.dir\\main.cpp.obj"
 }
