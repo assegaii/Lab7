@@ -18,8 +18,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "-std=gnu++17")
 # Включение папки include
 include_directories(include)
 
-set(CMAKE_TOOLCHAIN_FILE "${CMAKE_BINARY_DIR}/external/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
-
 # Обработка разных платформ
 if(WIN32)
     # Для Windows используем vcpkg
@@ -27,11 +25,6 @@ if(WIN32)
 elseif(UNIX)
     # Для Linux используем системные библиотеки Boost
     find_package(Boost CONFIG REQUIRED COMPONENTS filesystem program_options crc)
-endif()
-
-# Проверяем, что Boost найден
-if(NOT Boost_FOUND)
-    message(FATAL_ERROR "Boost libraries not found!")
 endif()
 
 # Создание исполняемого файла
