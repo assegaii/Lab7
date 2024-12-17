@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 
+cmake_policy(SET CMP0167 OLD)
+
 set(PATCH_VERSION "3" CACHE INTERNAL "Patch version")
 set(PROJECT_VERSION 1.0.${PATCH_VERSION})
+
 
 project(DuplicatesFinder VERSION ${PROJECT_VERSION})
 
