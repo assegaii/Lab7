@@ -14,9 +14,9 @@ jobs:
         with:
           submodules: recursive
       - name: Install dependencies via VCPKG
-        run: ./externals/vcpkg/vcpkg install boost-filesystem boost-program-options boost-crc
+        run: ./external/vcpkg/vcpkg install boost-filesystem boost-program-options boost-crc
       - run: cmake . -DPATCH_VERSION=${{ github.run_number }} -DCMAKE_TOOLCHAIN_FILE=./external/vcpkg/scripts/buildsystems/vcpkg.cmake
-      - run: cmake --build . 
+      - run: cmake --build .
       - run: ctest --output-on-failure
       - run: cmake --build . --target package
       - name: Upload Linux Artifact
@@ -33,9 +33,9 @@ jobs:
         with:
           submodules: recursive
       - name: Install dependencies via VCPKG
-        run: .\externals\vcpkg\vcpkg.exe install boost-filesystem boost-program-options boost-crc
+        run: .\external\vcpkg\vcpkg.exe install boost-filesystem boost-program-options boost-crc
       - run: cmake . -DPATCH_VERSION=${{ github.run_number }} -DCMAKE_TOOLCHAIN_FILE=./external/vcpkg/scripts/buildsystems/vcpkg.cmake -DBoost_DIR=./external/vcpkg/installed/x64-windows/share/boost
-      - run: cmake --build . 
+      - run: cmake --build .
       - run: ctest --output-on-failure
       - run: cmake --build . --target package
       - name: Upload Windows Artifact
