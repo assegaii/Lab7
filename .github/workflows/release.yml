@@ -130,6 +130,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git clone https://github.com/microsoft/winget-pkgs.git
+          mkdir -p winget-pkgs/manifests/d/DuplicatesFinder
           cp winget-manifest/DuplicatesFinder.yaml winget-pkgs/manifests/d/DuplicatesFinder/DuplicatesFinder.yaml
           cd winget-pkgs
           git config user.name "assegaii"
