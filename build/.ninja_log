@@ -1,4 +1,4 @@
 # ninja log v6
-37	11834	7561557710062956	CMakeFiles/DuplicatesFinder.dir/main.cpp.obj	3ac3f64010404bff
+110	10377	7561700864437447	CMakeFiles/DuplicatesFinder.dir/main.cpp.obj	324ddbdf47d644e8
 2297	2753	7560742244448400	DuplicatesFinder.exe	9ea73ab1294e5bfb
-11834	12211	7561557828039971	DuplicatesFinder-1.0.3-Windows.exe	e010b8bd10cad08d
+10377	10831	7561700967107251	DuplicatesFinder-1.0.3-Windows.exe	7f1dbbdbfbbc8aac

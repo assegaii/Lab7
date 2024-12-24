@@ -17,6 +17,9 @@
 //Build the testing tree.
 BUILD_TESTING:BOOL=ON
 
+//Value Computed by CMake
+Boost_BINARY_DIR:STATIC=D:/Study/C++/Labs/Lab7/build/externals/boost
+
 //The directory containing a CMake configuration file for Boost.
 Boost_DIR:PATH=C:/msys64/mingw64/lib/cmake/Boost-1.86.0
 
@@ -25,7 +28,13 @@ Boost_FILESYSTEM_LIBRARY_RELEASE:STRING=C:/msys64/mingw64/bin/libboost_filesyste
 //Path to a file.
 Boost_INCLUDE_DIR:PATH=C:/msys64/mingw64/include
 
+//Value Computed by CMake
+Boost_IS_TOP_LEVEL:STATIC=OFF
+
 Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE:STRING=C:/msys64/mingw64/bin/libboost_program_options-mt.dll
+
+//Value Computed by CMake
+Boost_SOURCE_DIR:STATIC=D:/Study/C++/Labs/Lab7/externals/boost
 
 //Path to a program.
 CMAKE_ADDR2LINE:FILEPATH=C:/msys64/mingw64/bin/addr2line.exe
@@ -172,7 +181,7 @@ CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 CMAKE_PROJECT_NAME:STATIC=DuplicatesFinder
 
 //Value Computed by CMake
-CMAKE_PROJECT_VERSION:STATIC=1.0.3
+CMAKE_PROJECT_VERSION:STATIC=1.0.1
 
 //Value Computed by CMake
 CMAKE_PROJECT_VERSION_MAJOR:STATIC=1
@@ -181,7 +190,7 @@ CMAKE_PROJECT_VERSION_MAJOR:STATIC=1
 CMAKE_PROJECT_VERSION_MINOR:STATIC=0
 
 //Value Computed by CMake
-CMAKE_PROJECT_VERSION_PATCH:STATIC=3
+CMAKE_PROJECT_VERSION_PATCH:STATIC=1
 
 //Value Computed by CMake
 CMAKE_PROJECT_VERSION_TWEAK:STATIC=
@@ -493,8 +502,6 @@ CMAKE_CACHE_PATCH_VERSION:INTERNAL=2
 CMAKE_COMMAND:INTERNAL=C:/msys64/mingw64/bin/cmake.exe
 //Path to cpack program executable.
 CMAKE_CPACK_COMMAND:INTERNAL=C:/msys64/mingw64/bin/cpack.exe
-//ADVANCED property for variable: CMAKE_CTEST_COMMAND
-CMAKE_CTEST_COMMAND-ADVANCED:INTERNAL=1
 //Path to ctest program executable.
 CMAKE_CTEST_COMMAND:INTERNAL=C:/msys64/mingw64/bin/ctest.exe
 //ADVANCED property for variable: CMAKE_CXX_COMPILER
@@ -666,7 +673,7 @@ CTEST_SUBMIT_RETRY_DELAY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: DART_TESTING_TIMEOUT
 DART_TESTING_TIMEOUT-ADVANCED:INTERNAL=1
 //Details about finding Boost
-FIND_PACKAGE_MESSAGE_DETAILS_Boost:INTERNAL=[C:/msys64/mingw64/lib/cmake/Boost-1.86.0/BoostConfig.cmake][cfound components: filesystem program_options ][v1.86.0()]
+FIND_PACKAGE_MESSAGE_DETAILS_Boost:INTERNAL=[C:/msys64/mingw64/lib/cmake/Boost-1.86.0/BoostConfig.cmake][cfound components: filesystem system ][v1.86.0(1.81)]
 //Details about finding Threads
 FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
 //ADVANCED property for variable: GITCOMMAND
@@ -678,7 +685,7 @@ MEMORYCHECK_COMMAND-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: MEMORYCHECK_SUPPRESSIONS_FILE
 MEMORYCHECK_SUPPRESSIONS_FILE-ADVANCED:INTERNAL=1
 //Patch version
-PATCH_VERSION:INTERNAL=3
+PATCH_VERSION:INTERNAL=1
 //ADVANCED property for variable: SITE
 SITE-ADVANCED:INTERNAL=1
 //linker supports push/pop state
