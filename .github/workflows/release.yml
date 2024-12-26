@@ -47,13 +47,7 @@ jobs:
       - run: git clone https://github.com/microsoft/vcpkg.git
       - run: .\vcpkg\bootstrap-vcpkg.bat
       - run: .\vcpkg\vcpkg.exe install boost-filesystem boost-program-options boost-crc
-      - name: Configure CMake
-        run: |
-          cmake . -G "Ninja" ^
-            -DCMAKE_TOOLCHAIN_FILE=.\vcpkg\scripts\buildsystems\vcpkg.cmake ^
-            -DCMAKE_C_COMPILER=cl ^
-            -DCMAKE_CXX_COMPILER=cl ^
-            -DPATCH_VERSION=${{ github.run_number }}
+      - run: cmake . -DPATCH_VERSION=${{ github.run_number }} -D CMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake -D CMAKE_CXX_COMPILER=g++
       - run: cmake --build . 
       - run: cmake --build . --target package
       - name: Upload Windows Artifact
