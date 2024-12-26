@@ -23,6 +23,10 @@ if(MINGW)
     set(Boost_USE_STATIC_LIBS ON)
 endif()
 
+if(DEFINED ENV{VCPKG_ROOT})
+    set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
+endif()
+
 # Поиск библиотек Boost
 find_package(Boost REQUIRED COMPONENTS system filesystem program_options)
 
