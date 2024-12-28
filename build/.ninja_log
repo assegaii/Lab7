@@ -1,5 +1,9 @@
 # ninja log v6
-27	5419	7569039496409276	CMakeFiles/DuplicatesFinder.dir/main.cpp.obj	3a1ef4555c8e9653
-2297	2753	7560742244448400	DuplicatesFinder.exe	9ea73ab1294e5bfb
-10377	10831	7561700967107251	DuplicatesFinder-1.0.3-Windows.exe	7f1dbbdbfbbc8aac
-5420	6162	7569039550337127	DuplicatesFinder-1.0.1-Windows.exe	9a1f3d36da8b8557
+24	7580	7570778902618984	CMakeFiles/DuplicatesFinder.dir/main.cpp.obj	3a1ef4555c8e9653
+7580	8179	7570778978181883	DuplicatesFinder-1.0.1-Windows.exe	9a1f3d36da8b8557
+25	7502	7570779806011292	CMakeFiles/DuplicatesFinder.dir/main.cpp.obj	3a1ef4555c8e9653
+7502	7975	7570779880780648	DuplicatesFinder-1.0.1-Windows.exe	9a1f3d36da8b8557
+28	4165	7570783967509371	CMakeFiles/DuplicatesFinder.dir/main.cpp.obj	3a1ef4555c8e9653
+4166	4493	7570784008889672	DuplicatesFinder-1.0.1-Windows.exe	9a1f3d36da8b8557
+71	7882	7570802720975923	CMakeFiles/DuplicatesFinder.dir/main.cpp.obj	3a1ef4555c8e9653
+7883	8726	7570802799094235	DuplicatesFinder-1.0.1-Windows.exe	9a1f3d36da8b8557

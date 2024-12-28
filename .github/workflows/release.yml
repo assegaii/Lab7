@@ -1,4 +1,4 @@
-name: 'C++ CI for AudioEditor'
+name: 'C++ CI'
 
 on:
   push:
